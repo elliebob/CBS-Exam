@@ -16,7 +16,7 @@ public final class Hashing {
 
       // We load the hashing algoritm we wish to use.
       MessageDigest md = MessageDigest.getInstance("MD5");
-      rawString = rawString + "fewgfh007";
+
 
       // We convert to byte array
       byte[] byteArray = md.digest(rawString.getBytes());
@@ -46,7 +46,7 @@ public final class Hashing {
     try {
       // We load the hashing algoritm we wish to use.
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
-      rawString = rawString + "qgfpapfso";
+
 
       // We convert to byte array
       byte[] hash = digest.digest(rawString.getBytes(StandardCharsets.UTF_8));
