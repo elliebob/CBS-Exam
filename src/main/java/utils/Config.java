@@ -23,6 +23,7 @@ public final class Config {
   //Lavet af mig
   private static long ORDER_TTL;
   private static long USER_TTL;
+  private static String SALT;
 
   public static long getProductTtl() { return PRODUCT_TTL; }
 
@@ -71,6 +72,8 @@ public final class Config {
     return SOLR_CORE;
   }
 
+  public static String getSALT() { return SALT; }
+
   public static void initializeConfig() throws IOException {
 
     // Init variables to parse JSON
@@ -108,5 +111,6 @@ public final class Config {
     //Lavet af mig
     ORDER_TTL = json.get("ORDER_TTL").getAsLong();
     USER_TTL = json.get("USER_TTL").getAsLong();
+    SALT = json.get("SALT").getAsString();
   }
 }

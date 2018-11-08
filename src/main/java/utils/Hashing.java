@@ -7,7 +7,10 @@ import org.bouncycastle.util.encoders.Hex;
 
 public final class Hashing {
 
+  private String salt = Config.getSALT();
+
   // TODO: You should add a salt and make this secure - fixed
+  // For at gøre den mere sikker kan man adde en salt til hver enkelt en som består af den Createdtime som brugeren har når de opretter sig.
   public static String md5(String rawString) {
     try {
 
@@ -60,4 +63,9 @@ public final class Hashing {
 
     return rawString;
   }
+  public String SaltnHash(String saltedhash){
+    String salt = saltedhash+this.salt;
+    return md5(salt);
+  }
+
 }

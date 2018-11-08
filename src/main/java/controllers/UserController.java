@@ -96,6 +96,8 @@ public class UserController {
 
   public static User createUser(User user) {
 
+    Hashing hashing = new Hashing();
+
     // Write in log that we've reach this step
     Log.writeLog(UserController.class.getName(), user, "Actually creating a user in DB", 0);
 
@@ -117,7 +119,7 @@ public class UserController {
             + "', '"
             + user.getPassword()
                 + "', '"
-            + Hashing.md5(user.getPassword())
+            + hashing.SaltnHash(user.getPassword())
             + "', '"
             + user.getEmail()
             + "', "
