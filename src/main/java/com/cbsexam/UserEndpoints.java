@@ -1,5 +1,6 @@
 package com.cbsexam;
 
+import cache.UserCache;
 import com.google.gson.Gson;
 import controllers.UserController;
 import java.util.ArrayList;
@@ -16,6 +17,9 @@ import utils.Log;
 
 @Path("user")
 public class UserEndpoints {
+
+  //Laves så der ikke laves en ny cache hver gang men kaldes en tidligere cache
+   UserCache userCache = new UserCache();
 
   /**
    * @param idUser
@@ -47,12 +51,12 @@ public class UserEndpoints {
     Log.writeLog(this.getClass().getName(), this, "Get all users", 0);
 
     // Get a list of users
-    ArrayList<User> users = UserController.getUsers();
+    ArrayList<User> users = userCache.getUsers(false);
 
     // TODO: Add Encryption to JSON - FIXED
     // Transfer users to json in order to return it to the user
     String json = new Gson().toJson(users);
-    // json = Encryption.encryptDecryptXOR(json);
+    json = Encryption.encryptDecryptXOR(json);
 
     // Return the users with the status code 200
     return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
