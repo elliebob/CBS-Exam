@@ -1,8 +1,16 @@
 package controllers;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+//Lagt som en dependency for at  importere
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+
 import model.User;
 import utils.Hashing;
 import utils.Log;
@@ -136,5 +144,116 @@ public class UserController {
 
     // Return user
     return user;
+  }
+
+  public static String loginUser(User user) {
+    //Tjekker om der er forbindelse til DB
+
+    if (dbCon == null) {
+      dbCon = new DatabaseController();
+
+      ResultSet resultSet;
+      User newUser;
+      String token = null;
+
+      try {
+        PreparedStatement loginUser = dbCon.getConnection().prepareStatement("SELECT * FROM user WHERE email = ? AND password = ?");
+        loginUser.setString(1, user.getEmail());
+        loginUser.setString(2, user.getPassword());
+
+        resultSet = loginUser.executeQuery();
+
+        if (resultSet.next()) {
+          newUser = new User(
+                  resultSet.getInt("id"),
+                  resultSet.getString("first_name"),
+                  resultSet.getString("last_name"),
+                  resultSet.getString("password"),
+                  resultSet.getString("email"));
+
+          if (newUser != null) {
+            try {
+              Algorithm algorithm = Algorithm.HMAC256("secret");
+              token = JWT.create()
+                      .withClaim("userID", newUser.getId())
+                      .withIssuer("auth0")
+                      .sign(algorithm);
+            } catch (JWTCreationException exception) {
+
+            } finally {
+              return token;
+            }
+          }
+        } else {
+          System.out.println("No user found");
+        }
+      } catch (SQLException ex) {
+        ex.printStackTrace();
+      }
+
+    }
+    return "";
+  }
+
+  public static Boolean deleteUser(String token) {
+    if (dbCon == null) {
+      dbCon = new DatabaseController();
+
+      try {
+        DecodedJWT jwt = JWT.decode(token);
+        int id = jwt.getClaim("userId").asInt();
+
+        try {
+          PreparedStatement deleteUser = dbCon.getConnection().prepareStatement("DELETE FROM USER WHERE id = ? ");
+
+          deleteUser.setInt(1, id);
+
+          int rowsAffected = deleteUser.executeUpdate();
+
+          if (rowsAffected == 1) {
+            return true;
+          }
+        } catch (SQLException sql) {
+          sql.printStackTrace();
+        }
+
+      } catch (JWTCreationException exception) {
+        exception.printStackTrace();
+      }
+      return false;
+
+    }
+
+    return null;
+  }
+  public static Boolean updateUser(User user, String token) {
+    if (dbCon == null) {
+      dbCon = new DatabaseController();
+    }
+    try {
+      DecodedJWT jwt = JWT.decode(token);
+      int id = jwt.getClaim("userId").asInt();
+
+      try {
+        PreparedStatement updateUser = dbCon.getConnection().prepareStatement("UPDATE USER SET" + "first_name = ?, last_name = ?, password = ?, email = ? WHERE id = ? ");
+        updateUser.setString(1, user.getFirstname());
+        updateUser.setString(2, user.getLastname());
+        updateUser.setString(3, user.getPassword());
+        updateUser.setString(4, user.getEmail());
+        updateUser.setInt(5, id);
+        int rowsaffected = updateUser.executeUpdate();
+
+        if (rowsaffected == 1) {
+          return true;
+
+        }
+      } catch (SQLException sql) {
+        sql.printStackTrace();
+      }
+    } catch (JWTCreationException exception) {
+      exception.printStackTrace();
+    }
+    return false;
+
   }
 }

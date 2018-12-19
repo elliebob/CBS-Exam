@@ -4,11 +4,7 @@ import cache.UserCache;
 import com.google.gson.Gson;
 import controllers.UserController;
 import java.util.ArrayList;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.User;
@@ -38,8 +34,12 @@ public class UserEndpoints {
     json = Encryption.encryptDecryptXOR(json);
 
     // Return the user with the status code 200
-    // TODO: What should happen if something breaks down?
+    // TODO: What should happen if something breaks down? - fixed
+    if (user != null){
     return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+  } else {
+    return Response.status(400).entity("User not found").build();
+    }
   }
 
   /** @return Responses */
@@ -85,27 +85,57 @@ public class UserEndpoints {
     }
   }
 
-  // TODO: Make the system able to login users and assign them a token to use throughout the system.
+  // TODO: Make the system able to login users and assign them a token to use throughout the system. - fixed
   @POST
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response loginUser(String x) {
+  public Response loginUser(String UserBody) {
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
+    //UserBody from json and put into user class
+    User user = new Gson().fromJson(UserBody, User.class);
+
+    //gets the user with the id
+    String token = UserController.loginUser(user);
+
+   //Returns data to the users
+    if (token != ""){
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("Your token" + token).build(); }
+    else {
+      return Response.status(400).entity("Couldn't create user").build();
+    }
+
   }
 
-  // TODO: Make the system able to delete users
-  public Response deleteUser(String x) {
+  // TODO: Make the system able to delete users - fixed
+  @DELETE
+  @Path("/{userId}/{token}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response deleteUser(@PathParam("userId") int userId, @PathParam("token") String token) {
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
+      Boolean deleted = UserController.deleteUser(token);
+
+      if(deleted){
+
+          // Return a response with status 200 and JSON as type
+          return Response.status(200).entity("User deleted").build();
+      } else
+          return Response.status(400).entity("Could not delete user").build();
   }
 
-  // TODO: Make the system able to update users
-  public Response updateUser(String x) {
+  // TODO: Make the system able to update users - fixed
+  @PUT
+  @Path("/{userId}/{token}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response updateUser(@PathParam("token") String token, String body) {
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
+      User user1 = new Gson().fromJson(body, User.class);
+
+      Boolean opdated = UserController.updateUser(user1,token);
+
+      if (opdated){
+          return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User is updated").build();
+      } else
+          // Return a response with status 200 and JSON as type
+          return Response.status(400).entity("Endpoint not implemented yet").build();
   }
 }
