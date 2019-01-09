@@ -122,8 +122,6 @@ public class UserController {
             + user.getFirstname()
             + "', '"
             + user.getLastname()
-            + "', '"
-            + user.getPassword()
                 + "', '"
             + hashing.SaltnHash(user.getPassword())
             + "', '"

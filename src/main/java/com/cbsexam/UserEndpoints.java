@@ -24,7 +24,7 @@ public class UserEndpoints {
    */
   @GET
   @Path("/{idUser}")
-  public Response getUser(@PathParam("idUser") int idUser) {
+  public Response getUser(@PathParam("idUser") int idUser){
 
     // Use the ID to get the user from the controller.
     User user = UserController.getUser(idUser);
@@ -46,7 +46,7 @@ public class UserEndpoints {
   /** @return Responses */
   @GET
   @Path("/")
-  public Response getUsers() {
+  public Response getUsers(){
 
     // Write to log that we are here
     Log.writeLog(this.getClass().getName(), this, "Get all users", 0);
