@@ -1,19 +1,18 @@
 package controllers;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import model.User;
+import utils.Hashing;
+import utils.Log;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-//Lagt som en dependency for at  importere
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-
-import model.User;
-import utils.Hashing;
-import utils.Log;
 
 public class UserController {
 
@@ -156,10 +155,12 @@ public class UserController {
       User newUser;
       String token = null;
 
+      Hashing hash = new Hashing();
+
       try {
         PreparedStatement loginUser = dbCon.getConnection().prepareStatement("SELECT * FROM user WHERE email = ? AND password = ?");
         loginUser.setString(1, user.getEmail());
-        loginUser.setString(2, user.getPassword());
+        loginUser.setString(2, hash.SaltnHash(user.getPassword()));
 
         resultSet = loginUser.executeQuery();
 
