@@ -3,13 +3,14 @@ package com.cbsexam;
 import cache.UserCache;
 import com.google.gson.Gson;
 import controllers.UserController;
-import java.util.ArrayList;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import model.User;
 import utils.Encryption;
 import utils.Log;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 
 @Path("user")
 public class UserEndpoints {
@@ -65,25 +66,27 @@ public class UserEndpoints {
   @POST
   @Path("/")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response createUser(String body) {
+  public Response createUser(String body){
+
 
     // Read the json from body and transfer it to a user class
-    User newUser = new Gson().fromJson(body, User.class);
+User newUser = new Gson().fromJson(body, User.class);
 
     // Use the controller to add the user
-    User createUser = UserController.createUser(newUser);
+User createUser = UserController.createUser(newUser);
 
     // Get the user back with the added ID and return it to the user
-    String json = new Gson().toJson(createUser);
+String json = new Gson().toJson(createUser);
 
     // Return the data to the user
-    if (createUser != null) {
-      // Return a response with status 200 and JSON as type
-      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
-    } else {
-      return Response.status(400).entity("Could not create user").build();
-    }
+if (createUser != null) {
+  // Return a response with status 200 and JSON as type
+  return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+} else {
+  return Response.status(400).entity("Could not create user").build();
+}
   }
+
 
   // TODO: Make the system able to login users and assign them a token to use throughout the system. - fixed
   @POST
