@@ -178,6 +178,9 @@ public class UserController {
                       .sign(algorithm);
             } catch (JWTCreationException exception) {
 
+              System.out.println(exception.getMessage());
+
+
             } finally {
               return token;
             }
@@ -194,6 +197,8 @@ public class UserController {
   }
 
   public static Boolean deleteUser(String token) {
+
+    //Her tjekkes der om der er forbindelse til serveren
     if (dbCon == null) {
       dbCon = new DatabaseController();
 
