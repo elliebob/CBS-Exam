@@ -144,7 +144,6 @@ public class UserController {
 
   public static String loginUser(User user) {
     //Tjekker om der er forbindelse til DB
-
     if (dbCon == null) {
       dbCon = new DatabaseController();
 
@@ -179,7 +178,6 @@ public class UserController {
             } catch (JWTCreationException exception) {
 
               System.out.println(exception.getMessage());
-
 
             } finally {
               return token;
