@@ -1,9 +1,10 @@
 package utils;
 
+import org.bouncycastle.util.encoders.Hex;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import org.bouncycastle.util.encoders.Hex;
 
 public final class Hashing {
 
@@ -63,6 +64,7 @@ public final class Hashing {
 
     return rawString;
   }
+  //Sætter salt bag på hash
   public String SaltnHash(String saltedhash){
     String salt = saltedhash+this.salt;
     return md5(salt);
